@@ -1,0 +1,71 @@
+[package]
+name = "metaforge"
+version = "1.0.0"
+edition = "2021"
+description = "See and remove hidden information in files (photo locations, author names, device serials) before you share them"
+authors = ["Zheer Khalid (https://zheer.dev)"]
+homepage = "https://zheer.dev"
+repository = "https://github.com/zheerkhalid/metaforge"
+license = "MIT"
+
+[lib]
+name = "metaforge"
+path = "src/lib.rs"
+
+[[bin]]
+name = "MetaForge"
+path = "src/main.rs"
+# All tests live in the library.
+test = false
+
+[dependencies]
+eframe = { version = "0.31.1", default-features = false, features = ["glow", "default_fonts"] }
+# Image decoding: previews, and pixel checks in the tests (lossless cleaning).
+image = { version = "0.25", default-features = false, features = ["png", "jpeg", "gif", "webp", "tiff"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# Native open/save dialogs (uses the system dialogs, no extra runtime).
+rfd = { version = "0.15", default-features = false }
+# Per-user Explorer menu entry.
+winreg = "0.52"
+# Office and OpenDocument files are ZIP archives.
+zip = { version = "2.6", default-features = false, features = ["deflate"] }
+flate2 = { version = "1", default-features = false, features = ["rust_backend"] }
+crc32fast = "1"
+# XML in Office, OpenDocument and XMP.
+quick-xml = "0.37"
+# Audio tags (ID3, Vorbis comments, MP4 ilst, RIFF INFO).
+lofty = "0.22"
+# PDF objects (Info dictionary, XMP, full rewrite without old revisions).
+lopdf = { version = "0.36", default-features = false }
+
+[dependencies.windows]
+version = "0.58"
+features = [
+    "Win32_Foundation",
+    "Win32_Security",
+    "Win32_Graphics_Gdi",
+    "Win32_Storage_FileSystem",
+    "Win32_System_Console",
+    "Win32_System_Threading",
+    "Win32_System_Time",
+    "Win32_UI_Shell",
+    "Win32_UI_WindowsAndMessaging",
+]
+
+[build-dependencies]
+tiny-skia = "0.11"
+embed-resource = "2.5"
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+strip = true
+panic = "abort"
+
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 2
